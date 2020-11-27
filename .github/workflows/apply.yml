@@ -1,0 +1,30 @@
+name: Terraform Apply
+
+on:
+  push:
+    branches:
+      - 'master'
+
+jobs:
+  build:
+
+    runs-on: ubuntu-20.04
+    
+    steps:
+    - uses: actions/checkout@v1
+    - uses: hashicorp/setup-terraform@v1
+      with:
+        terraform_version: 0.13.2
+        cli_config_credentials_token: ${{ secrets.TF_API_TOKEN }}
+
+    - run: terraform init
+      env:
+        TF_IN_AUTOMATION: 1
+        TF_WORKSPACE: 'prod'
+
+    - name: Terraform Apply
+      id: plan
+      run: terraform apply -no-color -auto-approve
+      env:
+        TF_IN_AUTOMATION: 1
+        TF_WORKSPACE: 'prod'
