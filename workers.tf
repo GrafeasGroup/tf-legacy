@@ -52,3 +52,10 @@ resource "linode_instance" "workers" {
 
   count = local.worker_servers
 }
+
+resource "linode_rdns" "workers" {
+  address = linode_instance.workers[count.index].ip_address
+  rdns    = "${linode_instance.workers[count.index].label}.paas.${local.domain}"
+
+  count = local.worker_servers
+}

@@ -52,3 +52,10 @@ resource "linode_instance" "apps" {
 
   count = local.app_servers
 }
+
+resource "linode_rdns" "apps" {
+  address = linode_instance.apps[count.index].ip_address
+  rdns    = "${linode_instance.apps[count.index].label}.paas.${local.domain}"
+
+  count = local.app_servers
+}
