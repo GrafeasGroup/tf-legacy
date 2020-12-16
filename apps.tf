@@ -20,35 +20,6 @@ resource "linode_instance" "apps" {
     update = "5m"
   }
 
-  connection {
-    type        = "ssh"
-    host        = self.ip_address
-    user        = var.ssh_username
-    port        = var.ssh_port
-    private_key = var.ssh_private_key
-  }
-
-  provisioner "file" {
-    destination = "/tmp/first-run.sh"
-    content     = <<-EOF
-    #!/usr/bin/env bash
-    set -euo pipefail
-
-    exec >/var/log/first-run.log 2>&1
-
-    ${templatefile("${path.module}/scripts/hostname.sh", { hostname = self.label, domain = "paas.${local.domain}" })}
-    printf '>>>  DONE\n'
-    EOF
-  }
-
-  provisioner "remote-exec" {
-    inline = [
-      "sudo chmod +x /tmp/first-run.sh",
-      "sudo /tmp/first-run.sh",
-      "sudo rm -f /tmp/first-run.sh",
-    ]
-  }
-
   count = local.app_servers
 }
 
