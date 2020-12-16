@@ -36,8 +36,6 @@ resource "linode_instance" "workers" {
 
     exec >/var/log/first-run.log 2>&1
 
-    dnf update -y
-
     ${templatefile("${path.module}/scripts/hostname.sh", { hostname = self.label, domain = "paas.${local.domain}" })}
     printf '>>>  DONE\n'
     EOF
@@ -45,7 +43,8 @@ resource "linode_instance" "workers" {
 
   provisioner "remote-exec" {
     inline = [
-      "sudo bash /tmp/first-run.sh",
+      "sudo chmod +x /tmp/first-run.sh",
+      "sudo /tmp/first-run.sh",
       "sudo rm -f /tmp/first-run.sh",
     ]
   }
