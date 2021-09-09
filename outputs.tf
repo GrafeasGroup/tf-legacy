@@ -1,13 +1,6 @@
-output "ssh_info" {
-  value = {
-    username = var.ssh_username
-    port     = var.ssh_port
-  }
-}
-
 output "workers" {
   value = [
-    for node linode_instance.workers:
+    for node in linode_instance.workers:
       {
         ipv4 = node.ip_address
         hostname = node.label
